@@ -1,0 +1,220 @@
+{
+  "Actions": [
+    {
+      "Icon": "images/play-pause",
+      "Name": "Play/Pause Media",
+      "States": [
+        {
+          "Image": "images/play-pause",
+          "TitleAlignment": "middle",
+          "FontSize": "12"
+        }
+      ],
+      "SupportedInMultiActions": true,
+      "Tooltip": "Send a multimedia Play/Pause command",
+      "UUID": "me.adamculbertson.mediacontrol.playpause",
+      "PropertyInspectorPath": "PropertyInspector/settings.html"
+    },
+    {
+      "Icon": "images/play",
+      "Name": "Play Media",
+      "States": [
+        {
+          "Image": "images/play",
+          "TitleAlignment": "middle",
+          "FontSize": "12"
+        }
+      ],
+      "SupportedInMultiActions": true,
+      "Tooltip": "Send a multimedia Play command",
+      "UUID": "me.adamculbertson.mediacontrol.play",
+      "PropertyInspectorPath": "PropertyInspector/settings.html"
+    },
+    {
+      "Icon": "images/pause",
+      "Name": "Pause Media",
+      "States": [
+        {
+          "Image": "images/pause",
+          "TitleAlignment": "middle",
+          "FontSize": "12"
+        }
+      ],
+      "SupportedInMultiActions": true,
+      "Tooltip": "Send a multimedia Pause command",
+      "UUID": "me.adamculbertson.mediacontrol.pause",
+      "PropertyInspectorPath": "PropertyInspector/settings.html"
+    },
+    {
+      "Icon": "images/stop",
+      "Name": "Stop Media",
+      "States": [
+        {
+          "Image": "images/stop",
+          "TitleAlignment": "middle",
+          "FontSize": "12"
+        }
+      ],
+      "SupportedInMultiActions": true,
+      "Tooltip": "Send a multimedia Stop command",
+      "UUID": "me.adamculbertson.mediacontrol.stop",
+      "PropertyInspectorPath": "PropertyInspector/settings.html"
+    },
+    {
+      "Icon": "images/previous",
+      "Name": "Previous Track",
+      "States": [
+        {
+          "Image": "images/previous",
+          "TitleAlignment": "middle",
+          "FontSize": "12"
+        }
+      ],
+      "SupportedInMultiActions": true,
+      "Tooltip": "Send a multimedia Previous command",
+      "UUID": "me.adamculbertson.mediacontrol.previous",
+      "PropertyInspectorPath": "PropertyInspector/settings.html"
+    },
+    {
+      "Icon": "images/next",
+      "Name": "Next Track",
+      "States": [
+        {
+          "Image": "images/next",
+          "TitleAlignment": "middle",
+          "FontSize": "12"
+        }
+      ],
+      "SupportedInMultiActions": true,
+      "Tooltip": "Send a multimedia Next command",
+      "UUID": "me.adamculbertson.mediacontrol.next",
+      "PropertyInspectorPath": "PropertyInspector/settings.html"
+    },
+    {
+      "Icon": "images/volume-plus",
+      "Name": "Raise Volume",
+      "States": [
+        {
+          "Image": "images/volume-plus",
+          "TitleAlignment": "middle",
+          "FontSize": "12"
+        }
+      ],
+      "SupportedInMultiActions": true,
+      "Tooltip": "Increase the global volume",
+      "UUID": "me.adamculbertson.mediacontrol.volup",
+      "PropertyInspectorPath": "PropertyInspector/settings.html"
+    },
+    {
+      "Icon": "images/volume-minus",
+      "Name": "Decrease Volume",
+      "States": [
+        {
+          "Image": "images/volume-minus",
+          "TitleAlignment": "middle",
+          "FontSize": "12"
+        }
+      ],
+      "SupportedInMultiActions": true,
+      "Tooltip": "Decrease the global volume",
+      "UUID": "me.adamculbertson.mediacontrol.voldown",
+      "PropertyInspectorPath": "PropertyInspector/settings.html"
+    },
+    {
+      "Icon": "images/test",
+      "Name": "Mute",
+      "States": [
+        {
+          "Image": "images/test",
+          "TitleAlignment": "middle",
+          "FontSize": "12"
+        }
+      ],
+      "SupportedInMultiActions": true,
+      "Tooltip": "Mute the default speaker",
+      "UUID": "me.adamculbertson.mediacontrol.mute",
+      "PropertyInspectorPath": "PropertyInspector/settings.html"
+    },
+
+    {
+      "Icon": "images/volume-plus",
+      "Name": "Raise App Volume",
+      "States": [
+        {
+          "Image": "images/volume-plus",
+          "TitleAlignment": "middle",
+          "FontSize": "12"
+        }
+      ],
+      "SupportedInMultiActions": true,
+      "Tooltip": "Raise an application's volume",
+      "UUID": "me.adamculbertson.mediacontrol.appvolup",
+      "PropertyInspectorPath": "PropertyInspector/settings.html"
+    },
+
+    {
+      "Icon": "images/volume-minus",
+      "Name": "Lower App Volume",
+      "States": [
+        {
+          "Image": "images/volume-minus",
+          "TitleAlignment": "middle",
+          "FontSize": "12"
+        }
+      ],
+      "SupportedInMultiActions": true,
+      "Tooltip": "Lower an application's volume",
+      "UUID": "me.adamculbertson.mediacontrol.appvoldown",
+      "PropertyInspectorPath": "PropertyInspector/settings.html"
+    },
+    {
+      "Icon": "images/test",
+      "Name": "Mute Application",
+      "States": [
+        {
+          "Image": "images/test",
+          "TitleAlignment": "middle",
+          "FontSize": "12"
+        }
+      ],
+      "SupportedInMultiActions": true,
+      "Tooltip": "Mute the audio output of an application",
+      "UUID": "me.adamculbertson.mediacontrol.appmute",
+      "PropertyInspectorPath": "PropertyInspector/settings.html"
+    },
+    {
+      "Icon": "images/volume-plus",
+      "Name": "Set Application Volume",
+      "States": [
+        {
+          "Image": "images/volume-plus",
+          "TitleAlignment": "middle",
+          "FontSize": "12"
+        }
+      ],
+      "SupportedInMultiActions": true,
+      "Tooltip": "Set the volume level of an application to a set value",
+      "UUID": "me.adamculbertson.mediacontrol.appvolset",
+      "PropertyInspectorPath": "PropertyInspector/settings.html"
+    }
+  ],
+  "Author": "Adam Culbertson",
+  "Description": "Media control and volume management for Stream Deck",
+  "Name": "Stream Deck Media Controls",
+  "Icon": "images/music",
+  "URL": "https://github.com/adamculbertson",
+  "Version": "0.1",
+  "CodePath": "bin/x64/StreamDeckMediaControl.exe",
+  "Category": "Media",
+  "CategoryIcon": "images/music",
+  "OS": [
+    {
+      "Platform": "windows",
+      "MinimumVersion": "10"
+    }
+  ],
+  "SDKVersion": 2,
+  "Software": {
+    "MinimumVersion": "4.4.1"
+  }
+}

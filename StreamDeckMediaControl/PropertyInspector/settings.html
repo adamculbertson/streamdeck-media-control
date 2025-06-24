@@ -1,0 +1,147 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Stream Deck Media Control Settings</title>
+    <link rel="stylesheet" href="src/sdpi.css">
+    <script src="src/sdtools.common.js"></script>
+    <script>
+        let settings = {};
+
+        // HTML elements to retrieve modified settings from
+        // These will be assigned once the websocket is created
+        let audioDropdown = null; // Audio application list
+        let appVolume = null; // Application volume text box
+        let appVolumeSize = null;
+        
+        // Retrieve the list of applications currently using audio from the plugin
+        function requestSessionNames() {
+            const payload = {
+                event: "requestSessionNames"
+            };
+
+            const msg = {
+                action: actionInfo.action,
+                event: "sendToPlugin",
+                context: uuid,
+                payload
+            };
+
+            websocket.send(JSON.stringify(msg));
+        }
+
+        // Send the updated settings payload to the plugin
+        function updateSettings() {
+            // HTML form items
+            const selectedApp = audioDropdown.value;
+            const appVolumeText = appVolume.value;
+            const appVolumeSizeText = appVolumeSize.value;
+
+            const payload = {
+                applicationName: selectedApp,
+                applicationVolume: appVolumeText,
+                applicationVolumeSize: appVolumeSizeText
+            };
+
+            const msg = {
+                action: actionInfo.action,
+                event: "setSettings",
+                context: uuid, // Not to be confused with the plugin's UUID, this is specific to this instance
+                payload
+            };
+
+            websocket.send(JSON.stringify(msg));
+        }
+
+        // Wait for Stream Deck to establish WebSocket connection
+        // Without this, pretty much everything doesn't work
+        document.addEventListener('websocketCreate', function () {
+            audioDropdown = document.getElementById("audioAppDropdown");
+            appVolume = document.getElementById("appVolume");
+            appVolumeSize = document.getElementById("appVolumeSize");
+
+            // Settings are sent via the actionInfo, so retrieve them
+            settings = actionInfo?.payload?.settings || {}
+
+            // Parse various events from the plugin
+            websocket.addEventListener('message', function (event) {
+                const json = JSON.parse(event.data);
+                
+                // Our requested audio apps
+                if (json.event === "sendToPropertyInspector" &&
+                    json.payload?.event === "setSessionNames") {
+                    populateAudioDropdown(json.payload?.applicationNames);
+                }
+
+                if (json.event === "didReceiveSettings") {
+                    // Update the settings and refresh the sessions (which will update the default, if that changed)
+                    settings = json.payload.settings;
+                    requestSessionNames();
+                    appVolume.value = settings['applicationVolume'];
+                }
+            });
+
+            // Form element event listeners, to update the settings
+            audioDropdown.addEventListener("change", updateSettings);
+
+            // Force a refresh of the audio applications
+            document.getElementById("refreshButton").addEventListener("click", requestSessionNames);
+            document.getElementById("saveButton").addEventListener("click", updateSettings);
+
+            if(settings['applicationVolume'] != null)
+                appVolume.value = settings['applicationVolume'];
+            else
+                appVolume.value = 0;
+            
+            if(settings['applicationVolumeSize'] != null)
+                appVolumeSize.value = settings['applicationVolumeSize'];
+            else
+                appVolumeSize.value = 24;
+        });
+
+        function populateAudioDropdown(apps) {
+            // Clear the dropdown list and re-add each item from the list of apps
+            audioDropdown.innerHTML = "";
+            apps.forEach(app => {
+                const opt = document.createElement("option");
+                opt.value = app;
+                opt.textContent = app;
+                audioDropdown.appendChild(opt);
+            });
+
+            // Set the default value to the applicationName in the settings (if one has been set)
+            if(settings.applicationName != null)
+                audioDropdown.value = settings.applicationName;
+        }
+    </script>
+</head>
+<body>
+<div class="sdpi-wrapper">
+    <div class="sdpi-item">
+        <div class="sdpi-item-label">Audio Application</div>
+        <select id="audioAppDropdown" name="applicationName" class="sdpi-item-value select"></select>
+    </div>
+
+    <div class="sdpi-item">
+        <div class="sdpi-item-label">Application Volume</div>
+        <input id="appVolume" name="appVolume" class="sdpi-item-value select">
+    </div>
+
+    <div class="sdpi-item">
+        <div class="sdpi-item-label">Application Volume Font Size</div>
+        <input id="appVolumeSize" name="appVolumeSize" class="sdpi-item-value select">
+    </div>
+
+
+    <div class="sdpi-item">
+        <div class="sdpi-item-label">Refresh</div>
+        <button class="sdpi-item-value" id="refreshButton">Refresh Apps</button>
+    </div>
+    <div class="sdpi-item">
+        <div class="sdpi-item-label">Save</div>
+        <button class="sdpi-item-value" id="saveButton">Save</button>
+    </div>
+</div>
+</body>
+</html>
