@@ -5,9 +5,9 @@
         <TargetFramework>net9.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-        <Version>0.1</Version>
-        <FileVersion>0.1</FileVersion>
-        <AssemblyVersion>0.1</AssemblyVersion>
+        <Version>0.2</Version>
+        <FileVersion>0.2</FileVersion>
+        <AssemblyVersion>0.2</AssemblyVersion>
         <!-- Target only Windows -->
         <SupportedOSPlatform>windows</SupportedOSPlatform>
         <SupportedOSPlatformVersion>10.0</SupportedOSPlatformVersion>

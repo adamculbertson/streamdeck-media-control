@@ -18,7 +18,8 @@ public class PluginSettings
         {
             ApplicationName = string.Empty,
             ApplicationVolume = 50,
-            ApplicationVolumeSize = 24
+            ApplicationVolumeSize = 24,
+            ApplicationVolumeChg = 10
         };
     }
 
@@ -27,7 +28,11 @@ public class PluginSettings
         
     [JsonProperty(PropertyName = "applicationVolume")]
     public float ApplicationVolume { get; set; }
-        
+    
+    [JsonProperty(PropertyName = "applicationVolumeChg")]
+    public int ApplicationVolumeChg { get; set; }
+
+    // Font size of the volume
     [JsonProperty(PropertyName = "applicationVolumeSize")]
     public int ApplicationVolumeSize { get; set; }
 }
@@ -163,7 +168,7 @@ public class PluginHelper
         if (payload.Settings.TryGetValue("applicationVolume", out var token) &&
             token.Type is JTokenType.Float or JTokenType.Integer)
         {
-            var value = Math.Clamp(token.Value<float>(), 0f, 1f);
+            var value = Math.Clamp(token.Value<float>(), 0f, 100f);
             payload.Settings["applicationVolume"] = value;
             
         }
@@ -234,11 +239,15 @@ public class PluginHelper
     private void OnSendToPlugin(object sender, SDEventReceivedEventArgs<BarRaider.SdTools.Events.SendToPlugin> e)
     {
         // Send the list of audio applications to the Property Inspector
-        if (e.Event.Payload["event"]?.ToString() == "requestSessionNames")
+        if (e.Event.Payload["event"]?.ToString() == "setSessionNames")
         {
             SendSessionNames();
         }
-        
+
+        if (e.Event.Payload["event"]?.ToString() == "getSettingsFields")
+        {
+            GetSettings();
+        }
         // Below are any items which will not work when settings are null
 
         // Currently have no items that will not work when settings are null
@@ -249,12 +258,126 @@ public class PluginHelper
     private void OnPropertyInspectorDidAppear(object sender,
         SDEventReceivedEventArgs<BarRaider.SdTools.Events.PropertyInspectorDidAppear> e)
     {
-        SendSessionNames();
+        GetSettings();
     }
     
     private void SaveSettings()
     {
         _connection.SetSettingsAsync(JObject.FromObject(_settings!));
+    }
+    
+    [SuppressMessage("ReSharper", "SwitchStatementHandlesSomeKnownEnumValuesWithDefault")]
+    [SuppressMessage("ReSharper", "SwitchStatementMissingSomeEnumCasesNoDefault")]
+    private void GetSettings()
+    {
+        var payload = new JObject() 
+        {
+            ["event"] = "getSettingsFields",
+        };
+        var settingsFields = new JArray();
+
+        switch (_buttonType)
+        {
+            // Actions that don't require settings will return an empty string
+            case ButtonActionType.PlayPause:
+            case ButtonActionType.Play:
+            case ButtonActionType.Pause:
+            case ButtonActionType.Stop:
+            case ButtonActionType.Previous:
+            case ButtonActionType.Next:
+            case ButtonActionType.MediaVolumeUp:
+            case ButtonActionType.MediaVolumeDown:
+            case ButtonActionType.MediaVolumeMute:
+                payload["settingsFields"] = settingsFields;
+                _connection.SendToPropertyInspectorAsync(payload);
+                return;
+        }
+        
+        // Common settings among the AppVolume* buttons, the application name and font size
+        var settingsAppName = new JObject()
+        {
+            ["type"] = "dropdown",
+            ["name"] = "applicationName",
+            ["label"] = "Audio Application",
+            ["value"] = _settings?.ApplicationName,
+            ["options"] = new JArray(GetSessionNames())
+        };
+        
+        var settingsAppSize = new JObject
+        {
+            ["type"] = "range",
+            ["name"] = "applicationVolumeSize",
+            ["label"] = "App Volume Font Size",
+            ["value"] = _settings?.ApplicationVolumeSize ?? 1,
+            ["range"] = new JObject
+            {
+                ["min"] = 1,
+                ["max"] = 50
+            }
+        };
+
+        var refreshApps = new JObject()
+        {
+            ["type"] = "button",
+            ["name"] = "refreshButton",
+            ["label"] = "Refresh Applications",
+            ["event"] = "setSessionNames",
+            ["eventItem"] = "applicationName"
+        };
+        
+        settingsFields.Add(settingsAppName);
+        settingsFields.Add(refreshApps);
+        settingsFields.Add(settingsAppSize);
+
+        switch (_buttonType) {
+            // Actions that do require settings
+            // Volume up and down both share the same increment
+            case ButtonActionType.AppVolumeUp:
+            case ButtonActionType.AppVolumeDown:
+                
+                var label = _buttonType == ButtonActionType.AppVolumeUp ? "Increase volume by" : "Decrease volume by";
+
+                var settingsAppVolume = new JObject
+                {
+                    ["type"] = "range",
+                    ["name"] = "applicationVolumeChg",
+                    ["label"] = label,
+                    ["value"] = _settings?.ApplicationVolumeChg ?? 0,
+                    ["range"] = new JObject
+                    {
+                        ["min"] = 0,
+                        ["max"] = 100
+                    }
+                };
+                
+                settingsFields.Add(settingsAppVolume);
+                break;                
+
+            // Mute only needs the application name and font size
+            case ButtonActionType.AppVolumeMute:
+                break;
+
+            // Volume Set needs the application name, font size, and the value to set to
+            case ButtonActionType.AppVolumeSet:
+                var settingsVolumeSet = new JObject
+                {
+                    ["type"] = "range",
+                    ["name"] = "applicationVolume",
+                    ["label"] = "Set Application Volume",
+                    ["value"] = _settings?.ApplicationVolume ?? 0,
+                    ["range"] = new JObject
+                    {
+                        ["min"] = 0,
+                        ["max"] = 100
+                    }
+                };
+                
+                settingsFields.Add(settingsVolumeSet);
+                break;
+         }
+
+        payload["settingsFields"] = settingsFields;
+        _connection.SendToPropertyInspectorAsync(payload);
     }
     
     private AudioSessionControl? FindSession(string appName)
@@ -313,7 +436,8 @@ public class PluginHelper
         var json = new JObject
         {
             ["event"] = "setSessionNames",
-            ["applicationNames"] = new JArray(sessions)
+            ["value"] = _settings?.ApplicationName,
+            ["options"] = new JArray(sessions)
         };
         _connection.SendToPropertyInspectorAsync(json);
     }

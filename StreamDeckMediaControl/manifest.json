@@ -203,7 +203,7 @@
   "Name": "Stream Deck Media Controls",
   "Icon": "images/music",
   "URL": "https://github.com/adamculbertson",
-  "Version": "0.1",
+  "Version": "0.2",
   "CodePath": "bin/x64/StreamDeckMediaControl.exe",
   "Category": "Media",
   "CategoryIcon": "images/music",
